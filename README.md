@@ -1,20 +1,5 @@
-### 1\. GitHub Repository Description
-
-**Copy this into your repo's "About" section:**
-
-> **Description:**
-> A full-stack "System 2" reasoning LLM built from scratch. Trains in PyTorch (560M params), compiles to WebAssembly, and runs locally in the browser via WebGPU. 💭 🦀
->
-> **Topics (Tags):**
 > `llm` `rust` `webgpu` `wasm` `pytorch` `system-2-reasoning` `inference-engine` `edge-ai` `from-scratch`
 
------
-
-### 2\. The `README.md`
-
-**Create this file in the root of your `monologue/` folder.**
-
-````markdown
 # Monologue 💭
 
 > **Private "System 2" AI Reasoning at the Edge.**
@@ -143,6 +128,3 @@ chmod +x speedrun.sh
 ## 📜 License
 
 MIT License.
-
-```
-```
