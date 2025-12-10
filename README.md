@@ -1,8 +1,6 @@
 # Monologue
 
-> **Private "System 2" AI Reasoning at the Edge.**
->
-> *A 560M parameter reasoning Large Language Model build from scratch and ran locally in your browser via Rust and WebGPU.*
+> *A 560M parameter reasoning Small Language Model built from scratch and run locally in your browser via Rust and WebGPU.*
 
 ## The Concept
 
@@ -118,6 +116,10 @@ chmod +x speedrun.sh
 
   - [ ] **UI:** React chat interface with collapsible "Thought Process" accordion.
   - [ ] **Workers:** Offload inference to Web Workers for non-blocking UI.
+
+## Acknowledgements
+
+This project was built with ❤️ using Andrej Karpathy's [nanoGPT](https://github.com/karpathy/nanoGPT) as a core reference for the Transformer implementation and training loop.
 
 ## License
 
