@@ -49,7 +49,7 @@ This repo is organized into modular components:
 | **`web/`** | The "Body". React frontend that runs the Rust engine via WASM. | TypeScript, React |
 | **`speedrun.sh`** | Automation script to build the tokenizer, prep data, and train. | Bash |
 
-## 🚀 Quick Start (The Speedrun)
+## Quick Start
 
 You can go from zero to a training run with a single script.
 
