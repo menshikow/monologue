@@ -119,7 +119,7 @@ chmod +x speedrun.sh
 
 ## Acknowledgements
 
-This project was built with ❤️ using Andrej Karpathy's [nanoGPT](https://github.com/karpathy/nanoGPT) as a core reference for the Transformer implementation and training loop.
+❤️ This project was heavily influenced by Andrej Karpathy's [nanoGPT](https://github.com/karpathy/nanoGPT).
 
 ## License
 
