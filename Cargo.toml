@@ -1,4 +1,6 @@
 [workspace]
 members = ["rust_tokenizer", "inference"]
-
 resolver = "2"
+
+[workspace.dependencies]
+anyhow = "1.0"
