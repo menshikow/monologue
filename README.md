@@ -77,8 +77,6 @@ cargo run --bin inference -- --model models/qwen-0.5b/model.bin --prompt "Hello!
 
 ### 2. Train the Brain (Paid)
 
-*Once the engine is proven to work:*
-
 ```bash
 # Launch the training pipeline (Requires GPU)
 ./scripts/run_training.sh
