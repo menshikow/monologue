@@ -8,7 +8,7 @@ use compact_str::CompactString; // more eficient strings
 use dary_heap::OctonaryHeap;
 use fancy_regex::Regex;
 use pyo3::prelude::*;
-use rayon::prelude::*; // turn standard interators into parallel ones 
+use rayon::prelude::*; // turn standard interators into parallel ones
 
 const GPT4_PATTERN: &str = r"'(?i:[sdmt]|ll|ve|re)|[^\r\n\p{L}\p{N}]?+\p{L}+|\p{N}{1,3}| ?[^\s\p{L}\p{N}]++[\r\n]*|\s*[\r\n]|\s+(?!\S)|\s+";
 type Pair = (u32, u32);
@@ -60,5 +60,34 @@ impl Word {
         }
         self.ids = out;
         deltas
+    }
+}
+
+#[derive(Debug, Eq)]
+struct MergeJob {
+    pair: Pair,
+    count: u64,
+    pos: AHashSet<usize>,
+}
+
+impl PartialEq for MergeJob {
+    fn eq(&self, other: &Self) -> bool {
+        self.count == other.count && self.pair == other.pair
+    }
+}
+
+impl PartialOrd for MergeJob {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for MergeJob {
+    fn cmp(&self, other: &Self) -> Ordering {
+        if self.count != other.count {
+            self.count.cmp(&other.count)
+        } else {
+            other.pair.cmp(&self.pair)
+        }
     }
 }
