@@ -1,1 +1,0 @@
-Hello world! <think> This is a test. </think>

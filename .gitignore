@@ -1,27 +1,17 @@
-# --- General ---
-.DS_Store
-.vscode/
-.idea/
-*.log
+/target/
+**/target/
+**/*.rs.bk
+Cargo.lock
 
-# --- Python (Training) ---
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
 .venv/
 venv/
 env/
 .env
+.uv/
 
-# --- Rust (Tokenizer & Inference) ---
-/target/
-/rust_tokenizer/target/
-/inference/target/
-**/*.rs.bk
-Cargo.lock
-
-# --- Web (React/Node) ---
 node_modules/
 /web/dist/
 /web/build/
@@ -29,16 +19,14 @@ node_modules/
 /web/.env.local
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+tscommand-*.txt
 
-# --- Project Specific (Data & Models) ---
-# Ignore raw datasets and tokenized binaries
 data/
 datasets/
 *.jsonl
 *.parquet
+*.txt
 
-# Ignore model checkpoints and exported weights
 checkpoints/
 models/
 out/
@@ -48,5 +36,12 @@ out/
 *.safetensors
 *.onnx
 
-# Ignore run artifacts
-run.log
+*.json
+!tokenizer.json  # Keep the config, ignore raw data
+*.model
+
+.DS_Store
+.vscode/
+.idea/
+*.log
+speedrun.sh
