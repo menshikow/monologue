@@ -2,17 +2,9 @@
 
 > *An engineering exploration: Building a 560M parameter reasoning Small Language Model from scratch to run locally in the browser via Rust and WebGPU.*
 
-## The Concept
+## The Architecture
 
-**Monologue** is a proposed solution to two specific problems in the current AI landscape: **Privacy** and **Reasoning Capability**.
-
-The goal is to train a model to generate an internal "Chain of Thought" (`<think>...</think>`) before answering. This mimics the "System 2" reasoning found in frontier models, but the architecture is designed to run entirely on the user's device.
-
-**The Promise:** Deep reasoning capabilities where your private thoughts never leave the browser.
-
-## The Planned Architecture
-
-This project is a **hybrid-stack application** that will demonstrate the full lifecycle of an AI product.
+This project is a **hybrid-stack application** that demonstrates the full lifecycle of an AI product.
 
 ```md
 [ PyTorch Training ]  ->  [ Model Weights (.bin) ]  ->  [ Rust Engine ]
@@ -20,7 +12,7 @@ This project is a **hybrid-stack application** that will demonstrate the full li
                                                           (Compiles to)
                                                                v
                                                       [ WebAssembly / UI ]
-```                                                      
+```
 
 ### Core Engineering Goals
 
@@ -30,51 +22,101 @@ This project is a **hybrid-stack application** that will demonstrate the full li
 
 ---
 
-## Proposed Structure
+## Project Structure
 
-The repository is being scaffolded into the following modular components:
-
-| Directory | Description | Stack |
-| --- | --- | --- |
-| **`training/`** | **The "Brain"**. PyTorch code to define and train the 560M param GPT model. | Python, PyTorch |
-| **`rust_tokenizer/`** | **The "Builder"**. A custom BPE tokenizer trainer to be built in Rust for speed. | Rust |
-| **`inference/`** | **The "Engine"**. The raw inference runtime (KV-Cache, MatMul). | Rust, wgpu, WGSL |
-| **`web/`** | **The "Body"**. React frontend to host the Rust engine via WASM. | TypeScript, React |
-| **`scripts/`** | Automation scripts for data prep and environment setup. | Bash |
-
----
-
-## The Vision: "Zero to Training"
-
-The end goal for the developer experience is a single script, `run.sh`, that automates the entire pipeline.
-
-### Target Workflow
-
-*Once implemented, the setup process will look like this:*
-
-```bash
-# 1. Clone the repo
-git clone https://github.com/your-username/monologue.git
-cd monologue
-
-# 2. Make executable
-chmod +x run.sh
-
-# 3. Launch
-./run.sh
+```md
+monologue/
+├── Cargo.toml                    # Workspace root configuration
+├── Cargo.lock                    # Dependency lock file
+│
+├── models/                       # Local model storage
+│   ├── qwen-0.5b/                # Placeholder model artifacts
+│   │   ├── model.bin             # Flattened binary weights
+│   │   └── tokenizer.json        # Qwen BPE config
+│   └── monologue-560m/           # (Future) Trained model 
+│
+├── inference/                    # The Engine (Rust + WebGPU)
+│   ├── Cargo.toml                # wgpu, WGSL dependencies
+│   └── src/
+│       ├── lib.rs                # Core inference library
+│       ├── model.rs              # Binary loader & Structs
+│       ├── kernels/              # WGSL shader modules (MatMul, RoPE)
+│       └── cache.rs              # KV-cache implementation
+│
+├── training/                     # PyTorch 
+│   ├── src/                      # Training scripts
+│   └── data/                     # FineWeb-Edu & OpenR1 datasets
+│
+├── web/                          # The Body (React + WASM)
+│   ├── src/                      # React/TypeScript source
+│   ├── public/                   # Static assets
+│   └── pkg/                      # Compiled WASM output
+│
+└── scripts/
+    ├── run.sh                    # Main automation script
+    └── export_qwen.py            # Converts Qwen safetensors to binary
 
 ```
 
-**What `run.sh` will do:**
+---
 
-1. Compile the Rust Tokenizer.
-2. Download FineWeb-Edu & OpenR1 datasets.
-3. Tokenize the data into binary files.
-4. Launch the PyTorch training loop.
+### 1. Setup the Engine (Free)
+
+```bash
+# 1. Clone the repo
+git clone [https://github.com/menshikow/monologue.git](https://github.com/menshikow/monologue.git)
+
+# 2. Download & Convert Qwen (The Placeholder)
+# This downloads Qwen2.5-0.5B and flattens it to 'models/qwen-0.5b/model.bin'
+python3 scripts/export_qwen.py
+
+# 3. Run the Rust Inference (CPU/Native check)
+cargo run --bin inference -- --model models/qwen-0.5b/model.bin --prompt "Hello!"
+
+```
+
+### 2. Train the Brain (Paid)
+
+*Once the engine is proven to work:*
+
+```bash
+# Launch the training pipeline (Requires GPU)
+./scripts/run_training.sh
+```
 
 ---
 
-## Tech Stack Strategy
+## Roadmap
+
+### Phase 1: The Engine (Qwen Integration)
+
+* [ ] **Artifacts:** Download `Qwen2.5-0.5B-Instruct` and export to raw binary (`.bin`).
+* [ ] **Loader:** Implement Rust `mmap` loader to read the binary model file.
+* [ ] **Math:** Implement WGSL shaders for:
+* [ ] RMSNorm (Root Mean Square Normalization)
+* [ ] RoPE (Rotary Positional Embeddings)
+* [ ] SwiGLU Activation
+* [ ] MatMul (Matrix Multiplication)
+
+* [ ] **Verification:** Pass "Sanity Check" (Rust logits == PyTorch logits).
+
+### Phase 2: The Brain (Custom Training)
+
+*Focus: Replacing the generic brain with a reasoning one.*
+
+* [ ] **Data Pipeline:** Blend "Instruction Following" with "Reasoning Trace" datasets.
+* [ ] **Training:** PyTorch loop to train a 560M param model from scratch.
+* [ ] **Drop-in:** Replace the Qwen `.bin` file with the Monologue `.bin` file.
+
+### Phase 3: The Application (Web/WASM)
+
+* [ ] **WASM:** Bind Rust inference `step()` function to JavaScript.
+* [ ] **UI:** React chat interface with collapsible `<think>` accordion.
+* [ ] **Optimization:** Implement KV-Cache paging for long-context performance.
+
+---
+
+## Tech Stack
 
 | Domain | Technology | Reason for Choice |
 | --- | --- | --- |
@@ -84,38 +126,9 @@ chmod +x run.sh
 | **Web** | **React / TS** | Efficient UI state management to handle the streaming token output. |
 | **Ops** | **WASM** | To port the heavy lifting of Rust into the universal browser environment. |
 
----
-
-## Roadmap & TODOs
-
-### Phase 1: Model Training (Current Focus)
-
-* [ ] **Architecture:** Define 560M param GPT (Nanochat config) in PyTorch.
-* [ ] **Data Pipeline:** Create script to blend "Instruction Following" with "Reasoning Trace" datasets.
-* [ ] **Tokenizer:** Implement Byte-Pair Encoding (BPE) trainer with special control tokens (`<think>`).
-* [ ] **Training:** Achieve loss convergence on initial subset (1B tokens).
-
-### Phase 2: Serialization
-
-* [ ] **Export:** Write Python script to flatten model weights to binary `.bin`.
-* [ ] **Quantization:** Investigate Int8 quantization strategies for browser memory efficiency.
-
-### Phase 3: Rust & WebGPU
-
-* [ ] **Kernels:** Write WGSL shaders for MatMul, RMSNorm, and RoPE.
-* [ ] **Inference Loop:** Implement the autoregressive generation loop in Rust.
-* [ ] **WASM:** Bind Rust functions to the JavaScript context.
-
-### Phase 4: Frontend
-
-* [ ] **UI:** Build React chat interface with collapsible "Thought Process" accordion.
-* [ ] **Workers:** Offload inference to Web Workers to ensure the UI remains non-blocking.
-
----
-
 ## Acknowledgements
 
-❤️ This project is heavily influenced by Andrej Karpathy's [nanoGPT](https://github.com/karpathy/nanoGPT). The goal is to take those principles and push them into the browser environment.
+❤️ This project is heavily influenced by Andrej Karpathy's [nanoGPT](https://github.com/karpathy/nanoGPT) and the [Burn](https://github.com/tracel-ai/burn) project.
 
 ## License
 
