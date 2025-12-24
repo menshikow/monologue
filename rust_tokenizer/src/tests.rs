@@ -1,6 +1,4 @@
-// Internal unit tests for `rust_tokenizer`.
-// These are compiled as part of the crate test target and can access
-// private items like `Word` and `train_core`.
+// acsess private crates
 
 use super::*;
 
@@ -56,5 +54,3 @@ fn train_core_increases_vocab_size() {
         new_vocab
     );
 }
-
-

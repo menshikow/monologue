@@ -1,6 +1,3 @@
-// benches/tokenizer_bench.rs
-// Benchmarks for tokenizer performance
-
 use criterion::{BenchmarkId, Criterion, black_box, criterion_group, criterion_main};
 use rust_tokenizer::Tokenizer;
 use std::collections::HashMap;
@@ -8,7 +5,6 @@ use std::collections::HashMap;
 fn create_trained_tokenizer() -> Tokenizer {
     let mut tok = Tokenizer::new().unwrap();
 
-    // Add some common English merges
     let mut merges = HashMap::new();
     merges.insert((116, 104), 256); // "th"
     merges.insert((105, 110), 257); // "in"
