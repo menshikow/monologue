@@ -31,6 +31,12 @@ monologue/
 ├── Cargo.toml                    # Workspace root configuration
 ├── Cargo.lock                    # Dependency lock file
 │
+├── rust_tokenizer/               # RUST CRATE: Custom BPE Builder
+│   ├── Cargo.toml                
+│   └── src/
+│       ├── lib.rs                # Core tokenizer library API
+│       └── tokenizer.rs          # BPE implementation logic
+│
 ├── models/                       # Local model storage
 │   ├── qwen-0.5b/                # Placeholder model artifacts
 │   │   ├── model.bin             # Flattened binary weights
@@ -56,6 +62,7 @@ monologue/
 │
 └── scripts/
     ├── run.sh                    # Main automation script
+    ├── train.sh                    # Main automation script
     └── export_qwen.py            # Converts Qwen safetensors to binary
 
 ```
