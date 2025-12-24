@@ -100,6 +100,7 @@ cargo run --bin inference -- --model models/qwen-0.5b/model.bin --prompt "Hello!
 
 ### Phase 1: The Engine (Qwen Integration)
 
+* [x] **Tokenizer:** Custom BPE tokenizer with Python bindings and Rust optimizations
 * [ ] **Artifacts:** Download `Qwen2.5-0.5B-Instruct` and export to raw binary (`.bin`).
 * [ ] **Loader:** Implement Rust `mmap` loader to read the binary model file.
 * [ ] **Math:** Implement WGSL shaders for:
