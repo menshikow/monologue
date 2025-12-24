@@ -328,7 +328,7 @@ impl Tokenizer {
         vocab_size: u32,
         buffer_size: usize,
     ) -> PyResult<()> {
-        let py_iter = iterator.iter()?;
+        let mut py_iter = iterator.iter()?;
 
         // Pre-sized for large datasets
         let mut global_counts = AHashMap::with_capacity(200_000);
@@ -459,10 +459,10 @@ impl Tokenizer {
     }
 
     /// Batch encoding for better throughput
-    pub fn encode_batch(&self, texts: Vec<&str>) -> Vec<Vec<u32>> {
+    pub fn encode_batch(&self, texts: Vec<String>) -> Vec<Vec<u32>> {
         if texts.len() < 100 {
             // Sequential for small batches
-            texts.into_iter().map(|t| self.encode(t)).collect()
+            texts.iter().map(|t| self.encode(t)).collect()
         } else {
             // Parallel for large batches
             texts.par_iter().map(|t| self.encode(t)).collect()
