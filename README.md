@@ -66,7 +66,7 @@ monologue/
 
 ```bash
 # 1. Clone the repo
-git clone [https://github.com/menshikow/monologue.git](https://github.com/menshikow/monologue.git)
+git clone https://github.com/menshikow/monologue.git
 
 # 2. Download & Convert Qwen (The Placeholder)
 # This downloads Qwen2.5-0.5B and flattens it to 'models/qwen-0.5b/model.bin'
