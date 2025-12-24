@@ -28,41 +28,47 @@ This project is a **hybrid-stack application** that demonstrates the full lifecy
 
 ```md
 monologue/
-├── Cargo.toml                    # Workspace root configuration
-├── Cargo.lock                    # Dependency lock file
+├── Cargo.toml                      # Workspace root configuration
+├── Cargo.lock                      # Dependency lock file
 │
-├── rust_tokenizer/               # RUST CRATE: Custom BPE Builder
-│   ├── Cargo.toml                
+├── rust_tokenizer/                 # RUST CRATE: Custom BPE Builder + Python bindings
+│   ├── Cargo.toml
+│   ├── src/
+│   │   ├── lib.rs                  # Core tokenizer library + pyo3 module
+│   │   └── tests.rs                # Rust unit tests for the tokenizer
+│   ├── benches/
+│   │   └── benchmark.rs            # Criterion benchmarks for tokenizer performance
+│   └── tests/
+│       ├── integration_tests.rs    # Rust integration tests (public API)
+│       └── test_tokenizer.py       # Python tests (run via pytest; require built extension)
+│
+├── models/                         # Local model storage
+│   ├── qwen-0.5b/                  # Placeholder model artifacts
+│   │   ├── model.bin               # Flattened binary weights
+│   │   └── tokenizer.json          # Qwen BPE config
+│   └── monologue-0.5b/             # (Future) Trained model
+│
+├── inference/                      # The Engine (Rust + WebGPU)
+│   ├── Cargo.toml                  # wgpu, WGSL dependencies
 │   └── src/
-│       └── lib.rs                # Core tokenizer library API 
+│       ├── lib.rs                  # Core inference library
+│       ├── model.rs                # Binary loader & model structs
+│       ├── kernels/                # WGSL shader modules (MatMul, RoPE, etc.)
+│       └── cache.rs                # KV-cache implementation
 │
-├── models/                       # Local model storage
-│   ├── qwen-0.5b/                # Placeholder model artifacts
-│   │   ├── model.bin             # Flattened binary weights
-│   │   └── tokenizer.json        # Qwen BPE config
-│   └── monologue-560m/           # (Future) Trained model 
+├── training/                       # PyTorch training pipeline
+│   ├── src/                        # Training scripts
+│   └── data/                       # FineWeb-Edu & OpenR1 datasets
 │
-├── inference/                    # The Engine (Rust + WebGPU)
-│   ├── Cargo.toml                # wgpu, WGSL dependencies
-│   └── src/
-│       ├── lib.rs                # Core inference library
-│       ├── model.rs              # Binary loader & Structs
-│       ├── kernels/              # WGSL shader modules (MatMul, RoPE)
-│       └── cache.rs              # KV-cache implementation
-│
-├── training/                     # PyTorch 
-│   ├── src/                      # Training scripts
-│   └── data/                     # FineWeb-Edu & OpenR1 datasets
-│
-├── web/                          # The Body (React + WASM)
-│   ├── src/                      # React/TypeScript source
-│   ├── public/                   # Static assets
-│   └── pkg/                      # Compiled WASM output
+├── web/                            # The Body (React + WASM)
+│   ├── src/                        # React/TypeScript source
+│   ├── public/                     # Static assets
+│   └── pkg/                        # Compiled WASM output (generated)
 │
 └── scripts/
-    ├── run.sh                    # Main automation script
-    ├── train.sh                    # Main automation script
-    └── export_qwen.py            # Converts Qwen safetensors to binary
+    ├── run.sh                      # Misc. automation / entrypoint (WIP)
+    ├── train.py                    # Training launcher (Python, WIP)
+    └── export_qwen.py              # Converts Qwen safetensors to binary
 
 ```
 
