@@ -1,7 +1,5 @@
 # Monologue
 
-![Image](https://github.com/user-attachments/assets/dee80dce-bc8d-4b9c-b9fd-7b2ffc20141a)
-
 > *An engineering exploration: Building a 560M parameter reasoning Small Language Model from scratch to run locally in the browser via Rust and WebGPU.*
 
 ## The Architecture
