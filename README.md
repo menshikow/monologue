@@ -34,8 +34,7 @@ monologue/
 ├── rust_tokenizer/               # RUST CRATE: Custom BPE Builder
 │   ├── Cargo.toml                
 │   └── src/
-│       ├── lib.rs                # Core tokenizer library API
-│       └── tokenizer.rs          # BPE implementation logic
+│       └── lib.rs                # Core tokenizer library API 
 │
 ├── models/                       # Local model storage
 │   ├── qwen-0.5b/                # Placeholder model artifacts
