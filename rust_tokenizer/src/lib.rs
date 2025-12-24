@@ -35,7 +35,7 @@ impl Word {
         self.ids.windows(2).map(|w| (w[0], w[1]))
     }
 
-    /// Highly optimized merge function with reduced allocations
+    /// Optimized merge with reduced allocations
     #[inline]
     fn merge_pair(&mut self, pair: Pair, new_id: u32) -> Vec<(Pair, i32)> {
         let (a, b) = pair;
@@ -147,9 +147,10 @@ impl Tokenizer {
             .map(|(chunk_idx, chunk)| {
                 let base_idx = chunk_idx * chunk_size;
 
-                // Pre-size hash maps based on expected load
-                let mut local_pc = AHashMap::with_capacity(chunk.len() * 2);
-                let mut local_wtu = AHashMap::with_capacity(chunk.len() * 2);
+                // [FIX 1] Explicit Type Annotation needed here
+                let mut local_pc: AHashMap<Pair, i32> = AHashMap::with_capacity(chunk.len() * 2);
+                let mut local_wtu: AHashMap<Pair, AHashSet<usize>> =
+                    AHashMap::with_capacity(chunk.len() * 2);
 
                 for (offset, w) in chunk.iter().enumerate() {
                     let i = base_idx + offset;
@@ -362,7 +363,9 @@ impl Tokenizer {
                 buffer
                     .par_iter()
                     .map(|text| {
-                        let mut local_map = AHashMap::with_capacity(128);
+                        // [FIX 2] Explicit Type Annotation needed here
+                        let mut local_map: AHashMap<CompactString, i32> =
+                            AHashMap::with_capacity(128);
 
                         for m in pattern.find_iter(text) {
                             if let Ok(m) = m {
@@ -490,10 +493,12 @@ impl Default for Tokenizer {
         Self::new().unwrap()
     }
 }
+// Rust unit tests are in `src/tests.rs`
+#[cfg(test)]
+mod tests;
 
-// module registration
 #[pymodule]
-fn rust_tokenizer(m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn rust_tokenizer(_: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<Tokenizer>()?;
     Ok(())
 }
