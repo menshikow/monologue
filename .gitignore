@@ -75,6 +75,8 @@ models/**/*.pt
 models/**/*.safetensors
 !models/**/.keep  
 
+
+# IDE and editor files
 .DS_Store
 .vscode/
 .idea/
@@ -82,4 +84,6 @@ models/**/*.safetensors
 *.swp
 *.swo
 
+# Project-specific
 /TODO.md
+/GIT_WORKFLOW.md
