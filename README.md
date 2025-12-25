@@ -1,24 +1,25 @@
 # Monologue
 
-> *An engineering exploration: Building a 560M parameter reasoning Small Language Model from scratch to run locally in the browser via Rust and WebGPU.*
+> *Building a browser-native LLM inference engine with Rust and WebGPU, starting with CPU-based inference using Qwen as a placeholder model.*
 
 ## The Architecture
 
 This project is a **hybrid-stack application** that demonstrates the full lifecycle of an AI product.
 
 ```md
-[ PyTorch Training ]  ->  [ Model Weights (.bin) ]  ->  [ Rust Engine ]
+[ PyTorch Training ]  ->  [ Model Weights (.bin) ]  ->  [ Rust Engine (CPU) ]
                                                                |
-                                                          (Compiles to)
-                                                               v
-                                                      [ WebAssembly / UI ]
+                                                           (Future: WebGPU)
+                                                                v
+                                                       [ WebAssembly / UI ]
 ```
 
 ### Core Engineering Goals
 
-1. **System 2 Alignment:** Create a mixed dataset (General Chat + Reasoning Traces).
-2. **Cross-Platform Inference:** Eliminate Python dependencies for the end-user by building a custom inference engine in Rust, compiled to WebAssembly.
-3. **Hardware Acceleration:** Implement custom Matrix Multiplication (MatMul) kernels in **WGSL** (WebGPU Shading Language) to utilize the user's GPU directly from the browser context.
+1. **CPU-First Inference:** Build a production-ready inference engine using existing Rust tensor libraries.
+2. **Qwen Integration:** Use Qwen2.5-0.5B as a placeholder model while developing custom training capabilities.
+3. **WebGPU Future:** Plan for GPU acceleration via WGSL shaders after CPU implementation is complete.
+4. **Browser Deployment:** Eliminate Python dependencies by compiling to WebAssembly.
 
 ---
 
@@ -27,119 +28,176 @@ This project is a **hybrid-stack application** that demonstrates the full lifecy
 ```md
 monologue/
 ├── Cargo.toml                      # Workspace root configuration
-├── Cargo.lock                      # Dependency lock file
+├── TODO.md                         # Detailed implementation roadmap
 │
-├── rust_tokenizer/                 # RUST CRATE: Custom BPE Builder + Python bindings
+├── rust_tokenizer/                 # ✅ PRODUCTION-READY: Custom BPE + Python bindings
 │   ├── Cargo.toml
 │   ├── src/
 │   │   ├── lib.rs                  # Core tokenizer library + pyo3 module
-│   │   └── tests.rs                # Rust unit tests for the tokenizer
+│   │   └── tests.rs                # Rust unit tests
 │   ├── benches/
-│   │   └── benchmark.rs            # Criterion benchmarks for tokenizer performance
+│   │   └── benchmark.rs            # Performance benchmarks
 │   └── tests/
-│       ├── integration_tests.rs    # Rust integration tests (public API)
-│       └── test_tokenizer.py       # Python tests (run via pytest; require built extension)
+│       ├── integration_tests.rs    # Rust integration tests
+│       └── test_tokenizer.py       # Python tests
 │
-├── models/                         # Local model storage
-│   ├── qwen-0.5b/                  # Placeholder model artifacts
-│   │   ├── model.bin               # Flattened binary weights
-│   │   └── tokenizer.json          # Qwen BPE config
-│   └── monologue-0.5b/             # (Future) Trained model
-│
-├── inference/                      # The Engine (Rust + WebGPU)
-│   ├── Cargo.toml                  # wgpu, WGSL dependencies
+├── inference/                      # 🚧 IN DEVELOPMENT: CPU inference engine
+│   ├── Cargo.toml                  # Tensor library dependencies
 │   └── src/
 │       ├── lib.rs                  # Core inference library
-│       ├── model.rs                # Binary loader & model structs
-│       ├── kernels/                # WGSL shader modules (MatMul, RoPE, etc.)
-│       └── cache.rs                # KV-cache implementation
+│       ├── main.rs                 # CLI interface
+│       └── [planned modules]       # model.rs, tensor.rs, loader.rs, etc.
 │
-├── training/                       # PyTorch training pipeline
-│   ├── src/                        # Training scripts
-│   └── data/                       # FineWeb-Edu & OpenR1 datasets
+├── training/                       # 📋 PLANNED: PyTorch training pipeline
+│   └── src/                        # Training scripts (placeholder)
 │
-├── web/                            # The Body (React + WASM)
-│   ├── src/                        # React/TypeScript source
-│   ├── public/                     # Static assets
-│   └── pkg/                        # Compiled WASM output (generated)
-│
-└── scripts/
-    ├── run.sh                      # Misc. automation / entrypoint (WIP)
-    ├── train.py                    # Training launcher (Python, WIP)
-    └── export_qwen.py              # Converts Qwen safetensors to binary
-
+├── web/                            # 📋 PLANNED: React + WASM interface
+│   └── src/
+│       └── App.tsx                 # React scaffold
 ```
 
 ---
 
-### 1. Setup the Engine (Free)
+## Current Status
+
+### ✅ **Completed**
+- **Production-ready BPE tokenizer** with Python bindings and comprehensive testing
+- **Well-structured project architecture** with clear separation of concerns
+- **Detailed implementation roadmap** (see TODO.md)
+
+### 🚧 **In Development** 
+- **CPU inference engine** using existing Rust tensor libraries
+- **Qwen2.5-0.5B integration** as placeholder model
+
+### 📋 **Planned**
+- **WebGPU acceleration** via WGSL shaders (future phase)
+- **Custom model training** pipeline
+- **Browser WASM deployment** with React interface
+
+---
+
+## Quick Start
+
+### Prerequisites
+- Rust 1.70+ 
+- Python 3.12+ with `uv` or `pip`
+- Node.js 18+ (for web development)
+
+### Setup
 
 ```bash
-# 1. Clone the repo
+# 1. Clone the repository
 git clone https://github.com/menshikow/monologue.git
+cd monologue
 
-# 2. Download & Convert Qwen (The Placeholder)
-# This downloads Qwen2.5-0.5B and flattens it to 'models/qwen-0.5b/model.bin'
-python3 scripts/export_qwen.py
+# 2. Build the workspace
+cargo build --workspace
 
-# 3. Run the Rust Inference (CPU/Native check)
+# 3. Test the tokenizer (working component)
+cd rust_tokenizer
+cargo test
+./run_tests_and_bench.sh
+
+# 4. Python setup for future model conversion
+cd ..
+uv sync  # or: pip install -e .
+```
+
+### Development Status
+
+**Working Components:**
+```bash
+# Tokenizer with Python bindings
+cargo run --bin rust_tokenizer  # (when implemented)
+python -c "import rust_tokenizer; print('Tokenizer works!')"
+```
+
+**Planned Components (not yet implemented):**
+```bash
+# CPU inference (future)
 cargo run --bin inference -- --model models/qwen-0.5b/model.bin --prompt "Hello!"
 
-```
+# Model conversion (future)  
+python scripts/export_qwen.py  # scripts to be created
 
-### 2. Train the Brain (Paid)
-
-```bash
-# Launch the training pipeline (Requires GPU)
-./scripts/run_training.sh
+# Web interface (future)
+cd web && npm run dev
 ```
 
 ---
 
-## Roadmap
+## Implementation Roadmap
 
-### Phase 1: The Engine (Qwen Integration)
+See **[TODO.md](./TODO.md)** for the detailed 6-phase implementation plan:
 
-* [x] **Tokenizer:** Custom BPE tokenizer with Python bindings and Rust optimizations
-* [ ] **Artifacts:** Download `Qwen2.5-0.5B-Instruct` and export to raw binary (`.bin`).
-* [ ] **Loader:** Implement Rust `mmap` loader to read the binary model file.
-* [ ] **Math:** Implement WGSL shaders for:
-* [ ] RMSNorm (Root Mean Square Normalization)
-* [ ] RoPE (Rotary Positional Embeddings)
-* [ ] SwiGLU Activation
-* [ ] MatMul (Matrix Multiplication)
+### **Phase 1-3: CPU Inference Engine** (Current Focus)
+- Tensor library integration and model loading
+- Qwen architecture implementation  
+- Generation pipeline and CLI interface
 
-* [ ] **Verification:** Pass "Sanity Check" (Rust logits == PyTorch logits).
+### **Phase 4-6: Production & Web Prep**
+- Model conversion and comprehensive testing
+- WASM compatibility and browser API design
+- Documentation and polish
 
-### Phase 2: The Brain (Custom Training)
-
-*Focus: Replacing the generic brain with a reasoning one.*
-
-* [ ] **Data Pipeline:** Blend "Instruction Following" with "Reasoning Trace" datasets.
-* [ ] **Training:** PyTorch loop to train a 560M param model from scratch.
-* [ ] **Drop-in:** Replace the Qwen `.bin` file with the Monologue `.bin` file.
-
-### Phase 3: The Application (Web/WASM)
-
-* [ ] **WASM:** Bind Rust inference `step()` function to JavaScript.
-* [ ] **UI:** React chat interface with collapsible `<think>` accordion.
-* [ ] **Optimization:** Implement KV-Cache paging for long-context performance.
+**Estimated Timeline:** 10-15 weeks total for complete CPU inference implementation.
 
 ---
 
 ## Tech Stack
 
-| Domain | Technology | Reason for Choice |
+| Domain | Technology | Status |
 | --- | --- | --- |
-| **AI / ML** | **PyTorch** | Industry standard for defining the Transformer architecture. |
-| **Systems** | **Rust** | Memory safety and performance are critical for the inference engine. |
-| **Compute** | **WebGPU** | The only viable path for high-performance hardware acceleration in the web. |
-| **Web** | **React / TS** | Efficient UI state management to handle the streaming token output. |
-| **Ops** | **WASM** | To port the heavy lifting of Rust into the universal browser environment. |
+| **Tokenizer** | **Rust + PyO3** | ✅ Production-ready |
+| **Inference** | **Rust + Tensor Library** | 🚧 In development |
+| **Training** | **PyTorch** | 📋 Planned |
+| **Web** | **React + TypeScript** | 📋 Scaffold only |
+| **Compute** | **CPU → WebGPU** | 🚧 CPU first, WebGPU future |
+| **Deployment** | **WASM** | 📋 Planned |
+
+---
+
+## Architecture Decisions
+
+### **Why CPU First?**
+- Reduces complexity and development time
+- Allows focus on model architecture and correctness
+- WebGPU integration planned after CPU implementation is stable
+- Easier debugging and validation
+
+### **Why Existing Tensor Libraries?**
+- Leverages battle-tested linear algebra implementations
+- Faster development than building custom tensor operations
+- Better performance optimization and SIMD support
+- Options: candle-core, tch, burn, or ndarray
+
+### **Why Qwen as Placeholder?**
+- No training costs while developing inference engine
+- Well-documented architecture specifications
+- Similar size to target 560M parameter model
+- Easy to replace with custom model later
+
+---
+
+## Contributing
+
+This project follows the conventions outlined in **[CONVENTIONS.md](./CONVENTIONS.md)**. Key guidelines:
+
+- **Strict architectural separation** between Rust, Python, and TypeScript components
+- **WASM compatibility** requirements for the inference engine
+- **Conventional commits** with clear scope definitions
+- **Comprehensive testing** for all components
+
+---
 
 ## Acknowledgements
 
-❤️ This project is heavily influenced by Andrej Karpathy's [nanoGPT](https://github.com/karpathy/nanoGPT) and the [Burn](https://github.com/tracel-ai/burn) project.
+❤️ This project is heavily influenced by:
+- Andrej Karpathy's [nanoGPT](https://github.com/karpathy/nanoGPT) for transformer architecture guidance
+- The [Burn](https://github.com/tracel-ai/burn) project for Rust ML framework inspiration
+- Hugging Face's [Qwen](https://huggingface.co/Qwen/Qwen2.5-0.5B) for the placeholder model
+
+---
 
 ## License
 

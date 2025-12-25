@@ -69,6 +69,12 @@ out/
 *.safetensors
 *.onnx
 
+# ignore model weight to not blow up the git tree
+models/**/*.bin
+models/**/*.pt
+models/**/*.safetensors
+!models/**/.keep  
+
 .DS_Store
 .vscode/
 .idea/
@@ -76,4 +82,4 @@ out/
 *.swp
 *.swo
 
-speedrun.sh
+/TODO.md
