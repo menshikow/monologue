@@ -30,7 +30,7 @@ monologue/
 ├── Cargo.toml                      # Workspace root configuration
 ├── TODO.md                         # Detailed implementation roadmap
 │
-├── rust_tokenizer/                 # ✅ PRODUCTION-READY: Custom BPE + Python bindings
+├── rust_tokenizer/                 # ✅ Custom BPE + Python bindings
 │   ├── Cargo.toml
 │   ├── src/
 │   │   ├── lib.rs                  # Core tokenizer library + pyo3 module
@@ -41,7 +41,7 @@ monologue/
 │       ├── integration_tests.rs    # Rust integration tests
 │       └── test_tokenizer.py       # Python tests
 │
-├── inference/                      # 🚧 IN DEVELOPMENT: CPU inference engine
+├── inference/                      # IN DEVELOPMENT: CPU inference engine
 │   ├── Cargo.toml                  # Tensor library dependencies
 │   └── src/
 │       ├── lib.rs                  # Core inference library
@@ -61,9 +61,8 @@ monologue/
 ## Current Status
 
 ### ✅ **Completed**
-- **Production-ready BPE tokenizer** with Python bindings and comprehensive testing
+- **BPE-tokenizer** with Python bindings and comprehensive testing
 - **Well-structured project architecture** with clear separation of concerns
-- **Detailed implementation roadmap** (see TODO.md)
 
 ### 🚧 **In Development** 
 - **CPU inference engine** using existing Rust tensor libraries
@@ -126,56 +125,16 @@ cd web && npm run dev
 
 ---
 
-## Implementation Roadmap
-
-See **[TODO.md](./TODO.md)** for the detailed 6-phase implementation plan:
-
-### **Phase 1-3: CPU Inference Engine** (Current Focus)
-- Tensor library integration and model loading
-- Qwen architecture implementation  
-- Generation pipeline and CLI interface
-
-### **Phase 4-6: Production & Web Prep**
-- Model conversion and comprehensive testing
-- WASM compatibility and browser API design
-- Documentation and polish
-
-**Estimated Timeline:** 10-15 weeks total for complete CPU inference implementation.
-
----
-
 ## Tech Stack
 
 | Domain | Technology | Status |
 | --- | --- | --- |
 | **Tokenizer** | **Rust + PyO3** | ✅ Production-ready |
-| **Inference** | **Rust + Tensor Library** | 🚧 In development |
+| **Inference** | **Rust + Tensor Library** | In development |
 | **Training** | **PyTorch** | 📋 Planned |
 | **Web** | **React + TypeScript** | 📋 Scaffold only |
-| **Compute** | **CPU → WebGPU** | 🚧 CPU first, WebGPU future |
+| **Compute** | **CPU → WebGPU** | CPU first, WebGPU future |
 | **Deployment** | **WASM** | 📋 Planned |
-
----
-
-## Architecture Decisions
-
-### **Why CPU First?**
-- Reduces complexity and development time
-- Allows focus on model architecture and correctness
-- WebGPU integration planned after CPU implementation is stable
-- Easier debugging and validation
-
-### **Why Existing Tensor Libraries?**
-- Leverages battle-tested linear algebra implementations
-- Faster development than building custom tensor operations
-- Better performance optimization and SIMD support
-- Options: candle-core, tch, burn, or ndarray
-
-### **Why Qwen as Placeholder?**
-- No training costs while developing inference engine
-- Well-documented architecture specifications
-- Similar size to target 560M parameter model
-- Easy to replace with custom model later
 
 ---
 
@@ -192,7 +151,7 @@ This project follows the conventions outlined in **[CONVENTIONS.md](./CONVENTION
 
 ## Acknowledgements
 
-❤️ This project is heavily influenced by:
+❤️ Thank much for:
 - Andrej Karpathy's [nanoGPT](https://github.com/karpathy/nanoGPT) for transformer architecture guidance
 - The [Burn](https://github.com/tracel-ai/burn) project for Rust ML framework inspiration
 - Hugging Face's [Qwen](https://huggingface.co/Qwen/Qwen2.5-0.5B) for the placeholder model
