@@ -149,6 +149,13 @@ This project follows the conventions outlined in **[CONVENTIONS.md](./CONVENTION
 
 ---
 
+## Motivation
+
+I created this project to understand and control the full inference stack of modern LLMs,  
+from tokenization to execution.
+
+---
+
 ## Acknowledgements
 
 ❤️ Thanks much for:
