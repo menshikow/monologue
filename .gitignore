@@ -87,3 +87,4 @@ models/**/*.safetensors
 # Project-specific
 /TODO.md
 /GIT_WORKFLOW.md
+/THEORY.md

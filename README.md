@@ -4,7 +4,7 @@
 
 ## The Architecture
 
-This project is a **hybrid-stack application** that demonstrates the full lifecycle of an AI product.
+This project is a **end-to-end** system that spans training, inference, and browser deployment
 
 ```md
 [ PyTorch Training ]  ->  [ Model Weights (.bin) ]  ->  [ Rust Engine (CPU) ]
@@ -151,7 +151,7 @@ This project follows the conventions outlined in **[CONVENTIONS.md](./CONVENTION
 
 ## Acknowledgements
 
-❤️ Thank much for:
+❤️ Thanks much for:
 - Andrej Karpathy's [nanoGPT](https://github.com/karpathy/nanoGPT) for transformer architecture guidance
 - The [Burn](https://github.com/tracel-ai/burn) project for Rust ML framework inspiration
 - Hugging Face's [Qwen](https://huggingface.co/Qwen/Qwen2.5-0.5B) for the placeholder model
